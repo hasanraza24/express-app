@@ -1,0 +1,54 @@
+<script src="/socket.io/socket.io.js"></script>
+<script src="javascripts/ejs.min.js"></script>
+<script type="text/javascript">
+    let users = [];
+    loadUsers('<%-JSON.stringify(users)%>');
+  const socket = io('http://localhost:3000');
+  socket.on('user-login', function(user) {
+      users.push(user)
+      addRow(user);
+  });
+  socket.on('user-logout', function(user){
+      let index = users.findIndex(user1 => {
+          return user.email === user1.email;
+      });
+      users.splice(index, 1);
+      deleteRow(index);
+  })
+  function loadUsers(d) {
+    users = JSON.parse(d);
+    console.log(users);
+  }
+  function myFunction() {
+    var table = document.getElementById('myTable');
+    console.log(table);
+    for(let i=0; i<users.length; i++) {
+        var row = table.insertRow(-1);
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        cell1.innerHTML = users[i].email;
+        cell2.innerHTML = users[i].name;
+    }
+}
+function addRow(user) {
+    var table = document.getElementById('myTable');
+    var row = table.insertRow(1);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    cell1.innerHTML = user.email;
+    cell2.innerHTML = user.name;
+}
+function deleteRow(i) {
+    var table = document.getElementById('myTable');
+    table.deleteRow(i);
+}
+window.onload = myFunction;
+</script>
+
+<table id="myTable">
+        <tr>
+            <th>Email</th>
+            <th>Name</th> 
+        </tr>
+</table>
+<a href="/logout">logout</a>
